@@ -1,0 +1,4 @@
+# The following items on the web host will be excluded from backup.
+
+backup-*.tar.gz
+public_html/wp-content/cache
