@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ###
 #
@@ -8,8 +8,8 @@
 #                   once per day using cron.
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-12
-#   Last Modified:  2014-12-14
-#         Version:  1.0
+#   Last Modified:  2014-12-20
+#         Version:  1.0.1
 #
 ###
 
@@ -78,7 +78,7 @@ SEND_EMAIL_ON_ERROR=true
 EMAIL_TO="you@pretendco.com, somebodyelse@pretendco.com"
 
 # The email notifications will be sent from this email address.
-EMAIL_FROM="$(echo $(whoami)@$(hostname))"
+EMAIL_FROM="$(whoami)@$(hostname)"
 
 # The path to sendmail on your server. Typically /usr/sbin/sendmail.
 sendmail="/usr/sbin/sendmail"
@@ -99,20 +99,20 @@ DEBUG_MODE=false
 ################################## FUNCTIONS ###################################
 
 # Log functions
-APPNAME=$(basename $0 | sed "s/\.sh$//")
+APPNAME=$(basename "$0" | sed "s/\.sh$//")
 fn_log_info() {
-    printf "$(date) : $APPNAME : $1\n" >> "$LOG_FILE"
+    echo "$(date) : $APPNAME : $1" >> "$LOG_FILE"
 }
 fn_log_debug() {
-    printf "$(date) : $APPNAME : [DEBUG] $1\n" >> "$LOG_FILE"
+    echo "$(date) : $APPNAME : [DEBUG] $1" >> "$LOG_FILE"
 }
 fn_log_warn() {
-    printf "$(date) : $APPNAME : [WARNING] $1\n" >> "$LOG_FILE"
-    printf "$(date) : $APPNAME : [WARNING] $1\n" 1>&2
+    echo "$(date) : $APPNAME : [WARNING] $1" >> "$LOG_FILE"
+    echo "$(date) : $APPNAME : [WARNING] $1" 1>&2
 }
 fn_log_error() {
-    printf "$(date) : $APPNAME : [ERROR] $1\n" >> "$LOG_FILE"
-    printf "$(date) : $APPNAME : [ERROR] $1\n" 1>&2
+    echo "$(date) : $APPNAME : [ERROR] $1" >> "$LOG_FILE"
+    echo "$(date) : $APPNAME : [ERROR] $1" 1>&2
 }
 
 # Make sure the whole script stops if Control-C is pressed.
@@ -125,7 +125,7 @@ trap 'fn_terminate' SIGINT
 
 ######################## VALIDATION AND ERROR CHECKING #########################
 
-printf "\n --- Begin $APPNAME --- \n\n" >> "$LOG_FILE"
+printf "\n --- Begin %s --- \n\n" "$APPNAME" >> "$LOG_FILE"
 
 # Set up ditto arguments. If DEBUG_MODE is on, we need it to be more verbose.
 if [[ $DEBUG_MODE == true ]]; then
@@ -194,7 +194,7 @@ fi # End sendmail validation.
 SITE_COUNT=${#WEBSITE_NAME[@]}
 
 # Begin iterating through websites.
-for (( i = 0; i < $SITE_COUNT; i++ )); do
+for (( i = 0; i < SITE_COUNT; i++ )); do
 
     fn_log_info "Started backing up ${WEBSITE_NAME[$i]} ($((i+1)) of $SITE_COUNT)."
     fn_log_info "Destination: ${BACKUP_DEST[$i]}"
@@ -408,7 +408,7 @@ for (( i = 0; i < $SITE_COUNT; i++ )); do
                 fn_log_debug "\n\n$SMS_MESSAGE\n\n"
             elif [[ $DEBUG_MODE == false ]]; then
                 # Send the SMS.
-                printf "$SMS_MESSAGE" | $sendmail "$SMS_RECIPIENT"
+                printf "%s" "$SMS_MESSAGE" | $sendmail "$SMS_RECIPIENT"
             fi
 
         fi
@@ -426,10 +426,10 @@ for (( i = 0; i < $SITE_COUNT; i++ )); do
 
             if [[ $DEBUG_MODE == true ]]; then
                 # Print the message, if in debug mode.
-                printf "$THE_EMAIL\n\n"
+                printf "%s\n\n" "$THE_EMAIL"
             elif [[ $DEBUG_MODE == false ]]; then
                 # Send the message.
-                printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
+                printf "%s" "$THE_EMAIL" | $sendmail "$EMAIL_TO"
             fi
 
         fi
@@ -447,10 +447,10 @@ for (( i = 0; i < $SITE_COUNT; i++ )); do
 
             if [[ $DEBUG_MODE == true ]]; then
                 # Print the message, if in debug mode.
-                printf "$THE_EMAIL\n\n"
+                printf "%s\n\n" "$THE_EMAIL"
             elif [[ $DEBUG_MODE == false ]]; then
                 # Send the message.
-                printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
+                printf "%s" "$THE_EMAIL" | $sendmail "$EMAIL_TO"
             fi
 
         fi
@@ -461,6 +461,6 @@ for (( i = 0; i < $SITE_COUNT; i++ )); do
 
 done # End iterating through websites.
 
-printf " --- End $APPNAME --- \n" >> "$LOG_FILE"
+printf " --- End %s --- \n" "$APPNAME" >> "$LOG_FILE"
 
 exit 0
