@@ -8,8 +8,8 @@
 #                   once per day using cron.
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-12
-#   Last Modified:  2014-12-20
-#         Version:  1.0.1
+#   Last Modified:  2014-12-30
+#         Version:  1.0.2
 #
 ###
 
@@ -199,9 +199,15 @@ for (( i = 0; i < SITE_COUNT; i++ )); do
     fn_log_info "Started backing up ${WEBSITE_NAME[$i]} ($((i+1)) of $SITE_COUNT)."
     fn_log_info "Destination: ${BACKUP_DEST[$i]}"
 
-    # If the exclusions file doesn't exist, create a blank one.
-    if [[ ! -f "${EXCLUDE_FILE[$i]}" ]]; then
-        echo "# No exclusions for ${WEBSITE_NAME[$i]}." >> "${EXCLUDE_FILE[$i]}"
+    # Verify the exclusions. Create a file if none exists.
+    if [[ -z "${EXCLUDE_FILE[$i]}" ]]; then
+        fn_log_warn "No exclusions file set for ${WEBSITE_NAME[$i]}."
+        EXCLUSIONS=""
+    else
+        if [[ ! -f "${EXCLUDE_FILE[$i]}" ]]; then
+            echo "# No exclusions for ${WEBSITE_NAME[$i]}." >> "${EXCLUDE_FILE[$i]}"
+        fi
+        EXCLUSIONS="--exclude-from=${EXCLUDE_FILE[$i]}"
     fi
 
     # See what folders already exist, and whether they can be reused for efficiency.
@@ -313,7 +319,7 @@ for (( i = 0; i < SITE_COUNT; i++ )); do
 
     # Use rsync to copy the files from the web host to the local destination folder.
     fn_log_info "Starting rsync copy..."
-    rsync --archive --recursive --compress --delete $VERBOSE --exclude-from="${EXCLUDE_FILE[$i]}" \
+    rsync --archive --recursive --compress --delete $VERBOSE $EXCLUSIONS \
         "${WEBSITE_HOST[$i]}":"${BACKUP_SOURCE[$i]}/*" "${BACKUP_DEST[$i]}"/"$DATESTAMP"_in_progress_rsync
     if [[ $? -ne 0 ]]; then
         fn_log_warn "The rsync copy of ${WEBSITE_NAME[$i]} encountered errors."
