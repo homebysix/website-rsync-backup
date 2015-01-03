@@ -8,7 +8,7 @@
 #                   once per day using cron.
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-12
-#   Last Modified:  2014-12-30
+#   Last Modified:  2015-01-02
 #         Version:  1.0.2
 #
 ###
@@ -414,7 +414,7 @@ for (( i = 0; i < SITE_COUNT; i++ )); do
                 fn_log_debug "\n\n$SMS_MESSAGE\n\n"
             elif [[ $DEBUG_MODE == false ]]; then
                 # Send the SMS.
-                printf "%s" "$SMS_MESSAGE" | $sendmail "$SMS_RECIPIENT"
+                printf "$SMS_MESSAGE" | $sendmail "$SMS_RECIPIENT"
             fi
 
         fi
@@ -432,10 +432,10 @@ for (( i = 0; i < SITE_COUNT; i++ )); do
 
             if [[ $DEBUG_MODE == true ]]; then
                 # Print the message, if in debug mode.
-                printf "%s\n\n" "$THE_EMAIL"
+                printf "$THE_EMAIL\n\n"
             elif [[ $DEBUG_MODE == false ]]; then
                 # Send the message.
-                printf "%s" "$THE_EMAIL" | $sendmail "$EMAIL_TO"
+                printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
             fi
 
         fi
@@ -456,7 +456,7 @@ for (( i = 0; i < SITE_COUNT; i++ )); do
                 printf "%s\n\n" "$THE_EMAIL"
             elif [[ $DEBUG_MODE == false ]]; then
                 # Send the message.
-                printf "%s" "$THE_EMAIL" | $sendmail "$EMAIL_TO"
+                printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
             fi
 
         fi
