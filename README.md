@@ -39,8 +39,8 @@ For automatic daily runs, add the script to the [crontab](http://crontab.org/). 
 
 ## To Do / Roadmap
 
-- Dry-run mode that shows what will happen instead of actually doing it.
-- Version pruning, coming soon.
+- [ ] Dry-run mode that shows what will happen instead of actually doing it.
+- [ ] Version pruning, coming soon.
 
 
 ## Acknowledgements
